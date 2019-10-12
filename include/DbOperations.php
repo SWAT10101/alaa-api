@@ -39,7 +39,7 @@
     }
 
     private function isEmailExist($email){
-        $stmt = $this->$con->perpare("SELECT PersonID FROM users WHERE Email = ?");
+        $stmt = $this->con->prepare("SELECT PersonID FROM users WHERE Email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();

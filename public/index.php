@@ -5,7 +5,14 @@ use \Psr\Http\Message\ResponseInterface as Response;
 require '../vendor/autoload.php';
 require '../include/DbOperations.php';
 
-$app = new \Slim\App;
+$config = [
+    'settings' => [
+        'displayErrorDetails' => true,
+
+    ]
+];
+
+$app = new \Slim\App($config);
 
 /*
 endpoint: createuser
@@ -13,8 +20,9 @@ paramenters: firstname, lastname, email, password, phone, block, building, floor
 method: post
 */
 
+
 $app->post('/createuser', function(Request $request, Response $response){
-    if(!haveEmptyParameters(array('firstname','lastname', 'email', 'password', 'phone', 'block', 'building', 'floor', 'flat' ), $response))
+    if(!haveEmptyParameters(array('firstname','lastname', 'email', 'password', 'phone', 'block', 'street','building', 'floor', 'flat' ), $response))
     {
         $request_data = $request->getParsedBody();
         
@@ -24,6 +32,7 @@ $app->post('/createuser', function(Request $request, Response $response){
         $password = $request_data['password'];
         $phone = $request_data['phone'];
         $block = $request_data['block'];
+        $street = $request_data['street'];
         $building = $request_data['building'];
         $floor = $request_data['floor'];
         $flat = $request_data['flat'];
@@ -32,7 +41,7 @@ $app->post('/createuser', function(Request $request, Response $response){
 
         $db = new DbOperations;
 
-        $result = $db->createUser($firstname, $lastname, $email, $hase_password, $phone, $block, $building, $floor, $flat);
+        $result = $db->createUser($firstname, $lastname, $email, $hase_password, $phone, $block, $street,$building, $floor, $flat);
         
         if($result == USER_CREATED)
         {
