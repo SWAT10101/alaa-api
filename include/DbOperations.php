@@ -96,6 +96,31 @@
         return $user;
     }
 
+    //This function to get  all users 
+    public function getAllUsers()
+    {
+        $stmt = $this->con->prepare("SELECT FirstName, LasttName, Email, Phone, Block, Street, Building, Floor, Flat FROM users;"); 
+        $stmt->execute();
+        $stmt->bind_result($firstname, $lastName, $email, $phone, $block, $street, $building, $floor, $flar);
+        $users = array();
+        while($stmt->fetch())
+        {
+            $user = array();
+            $user['FirstName'] = $firstname;
+            $user['LasttName'] = $lastName;
+            $user['Email'] = $email;
+            $user['Phone'] = $phone;
+            $user['Block'] = $block;
+            $user['Street'] = $street;
+            $user['Building'] = $building;
+            $user['Floor'] = $floor;
+            $user['Flat'] = $flar;
+            array_push($users, $user);
+        }
+        return $users;
+        
+    }
+
     // This function to check if user exist
     private function isEmailExist($email){
         $stmt = $this->con->prepare("SELECT PersonID FROM users WHERE Email = ?");

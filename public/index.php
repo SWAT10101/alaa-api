@@ -14,12 +14,6 @@ $config = [
 
 $app = new \Slim\App($config);
 
-$app->get('/test', function(Request $request, Response $response){
-
-    echo 'TEST OK';
-
-});
-
 /*
 endpoint: createuser
 paramenters: firstname, lastname, email, password, phone, block, building, floor, flat
@@ -97,7 +91,6 @@ paramenters: email, password
 method: post
 */
 
-
 $app->post('/userlogin', function(Request $request, Response $response){
        
     if(!haveEmptyParameters(array('email', 'password'), $response))
@@ -154,6 +147,27 @@ $app->post('/userlogin', function(Request $request, Response $response){
                           ->withStatus(422);
 });
 
+
+
+/*
+endpoint: all users
+paramenters: No
+method: get
+*/
+$app->get('/allusers', function(Request $request, Response $response ){
+        $db = new DbOperations;
+
+        $users = $db->getAllUsers();
+
+        $response_data['error'] = false;
+        $response_data['users'] = $users;
+
+        $response->write(json_encode($response_data));
+
+        return $response->withHeader('Content-type', 'application/json')
+        ->withStatus(200);
+
+});
 
 function haveEmptyParameters($required_params, $response){
 
