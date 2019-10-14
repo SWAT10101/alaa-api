@@ -12,6 +12,7 @@
 
     }
 
+    //This function to create users
     public function createUser($firstanem, $lastName, $email, $password, $phone, $block, $street, $building, $Floor, $Flat)
     {
         if(!$this->isEmailExist($email))
@@ -38,6 +39,64 @@
         
     }
 
+    //This function for user login
+    public function userLogin($email, $password)
+    {
+        if($this->isEmailExist($email))
+        {
+            $hashed_password = $this->getUserPasswordByEmail($email);
+
+            if(password_verify($password, $hashed_password))
+            {
+              return USER_AUTHENTICATED;  
+            }
+            else
+            {
+              return USER_PASSWORD_DO_NOT_MATCH;
+            }
+
+
+        }
+        else
+        {
+          return USER_NOT_FOUND;
+        }
+    }
+
+    //This function to get user password by email
+    private function getUserPasswordByEmail($email)
+    {
+        $stmt = $this->con->prepare("SELECT Password FROM users WHERE Email = ?"); 
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->bind_result($password);
+        $stmt->fetch();
+        return $password;
+     
+    }
+
+    //This function to get user by his email
+    public function getUserByEmail($email)
+    {
+        $stmt = $this->con->prepare("SELECT FirstName, LasttName, Email, Phone, Block, Street, Building, Floor, Flat FROM users WHERE Email = ?"); 
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->bind_result($firstname, $lastName, $email, $phone, $block, $street, $building, $floor, $flar);
+        $stmt->fetch();
+        $user = array();
+        $user['FirstName'] = $firstname;
+        $user['LasttName'] = $lastName;
+        $user['Email'] = $email;
+        $user['Phone'] = $phone;
+        $user['Block'] = $block;
+        $user['Street'] = $street;
+        $user['Building'] = $building;
+        $user['Floor'] = $floor;
+        $user['Flat'] = $flar;
+        return $user;
+    }
+
+    // This function to check if user exist
     private function isEmailExist($email){
         $stmt = $this->con->prepare("SELECT PersonID FROM users WHERE Email = ?");
         $stmt->bind_param("s", $email);
