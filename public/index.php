@@ -7,6 +7,12 @@ require '../include/DbOperations.php';
 
 $app = new \Slim\App;
 
+$app->get('/test', function(Request $request, Response $response){
+
+    echo 'TEST OK';
+
+});
+
 /*
 endpoint: createuser
 paramenters: firstname, lastname, email, password, phone, block, building, floor, flat
