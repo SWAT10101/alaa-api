@@ -96,7 +96,7 @@
         return $user;
     }
 
-    //This function to get  all users 
+    //This function to get all users 
     public function getAllUsers()
     {
         $stmt = $this->con->prepare("SELECT FirstName, LasttName, Email, Phone, Block, Street, Building, Floor, Flat FROM users;"); 
@@ -119,6 +119,22 @@
         }
         return $users;
         
+    }
+
+    //This function to update user information
+    public function updateUser($email, $phone, $block, $street, $building, $floor, $flat, $id)
+    {
+        $stmt = $this->con->prepare("UPDATE users SET Email = ?, Phone = ?, Block = ?, Street = ?, Building = ?, Floor = ?, Flat = ? WHERE PersonID = ?"); 
+        $stmt->bind_param("sisssssi", $email, $phone, $block, $street, $building, $floor, $flat, $id);
+        if($stmt->execute())
+        {
+           return true;
+        }
+        else
+        {
+            return false;
+        }
+
     }
 
     // This function to check if user exist

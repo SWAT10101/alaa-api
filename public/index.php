@@ -20,7 +20,7 @@ paramenters: firstname, lastname, email, password, phone, block, building, floor
 method: post
 */
 $app->post('/createuser', function(Request $request, Response $response){
-    if(!haveEmptyParameters(array('firstname','lastname', 'email', 'password', 'phone', 'block', 'street','building', 'floor', 'flat' ), $response))
+    if(!haveEmptyParameters(array('firstname','lastname', 'email', 'password', 'phone', 'block', 'street','building', 'floor', 'flat' ), $request, $response))
     {
         $request_data = $request->getParsedBody();
         
@@ -93,7 +93,7 @@ method: post
 
 $app->post('/userlogin', function(Request $request, Response $response){
        
-    if(!haveEmptyParameters(array('email', 'password'), $response))
+    if(!haveEmptyParameters(array('email', 'password'), $request, $response))
     {
         $request_data = $request->getParsedBody();
         
@@ -169,11 +169,75 @@ $app->get('/allusers', function(Request $request, Response $response ){
 
 });
 
-function haveEmptyParameters($required_params, $response){
+
+
+/*
+endpoint: update user 
+paramenters: phone block street building floor flat
+method: put
+*/
+$app->put('/updateuser/{id}', function(Request $request, Response $response, array $args){
+
+    $id = $args['id'];
+
+    if(!haveEmptyParameters(array('email','phone', 'block', 'street', 'building', 'floor', 'flat', 'id'), $request, $response))
+    {
+        $request_data = $request->getParsedBody();
+
+
+        $email = $request_data['email'];
+        $phone = $request_data['phone'];
+        $block = $request_data['block'];
+        $street = $request_data['street'];
+        $building = $request_data['building'];
+        $floor = $request_data['floor'];
+        $flat = $request_data['flat'];
+        $id = $request_data['id'];
+
+        $db = new DbOperations;
+
+        if($db->updateUser($email, $phone, $block, $street, $building, $floor, $flat, $id))
+        {
+            $response_data = array();
+            $response_data['error'] = false;
+            $response_data['message'] = 'User Update Syccessfullt';
+            $user = $db->getUserByEmail($email);
+            $response_data['user'] = $user;
+
+            $response->write(json_encode($response_data));
+            return $response
+                           ->withHeader('Content-type', 'application/json')
+                           ->withStatus(200);
+            
+        }
+        else
+        {
+            $response_data = array();
+            $response_data['error'] = true;
+            $response_data['message'] = 'Please try agine later';
+            $user = $db->getUserByEmail($email);
+            $response_data['user'] = $user;
+
+            $response->write(json_encode($response_data));
+            return $response
+                           ->withHeader('Content-type', 'application/json')
+                           ->withStatus(442);
+        }
+    }
+
+
+
+    
+    return $response
+                    ->withHeader('Content-type', 'application/json')
+                    ->withStatus(200);
+});
+
+function haveEmptyParameters($required_params, $request, $response){
 
     $error = false;
     $error_params = '';
-    $request_params = $_REQUEST;
+    $request_params = $request->getParsedBody();
 
     foreach($required_params as $param){
         if(!isset($request_params[$param]) || strlen($request_params[$param]) <= 0)
