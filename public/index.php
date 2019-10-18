@@ -233,6 +233,11 @@ $app->put('/updateuser/{id}', function(Request $request, Response $response, arr
                     ->withStatus(200);
 });
 
+
+
+
+
+//This ufnction to check parameter if empty or not
 function haveEmptyParameters($required_params, $request, $response){
 
     $error = false;
