@@ -223,11 +223,7 @@ $app->put('/updateuser/{id}', function(Request $request, Response $response, arr
                            ->withHeader('Content-type', 'application/json')
                            ->withStatus(442);
         }
-    }
-
-
-
-    
+    }   
     return $response
                     ->withHeader('Content-type', 'application/json')
                     ->withStatus(200);
@@ -235,9 +231,77 @@ $app->put('/updateuser/{id}', function(Request $request, Response $response, arr
 
 
 
+/*
+endpoint: change user password 
+paramenters: current password   new password   email
+method: put
+*/
+$app->put('/updatepassword', function(Request $request, Response $response, array $args){
 
 
-//This ufnction to check parameter if empty or not
+
+    if(!haveEmptyParameters(array('currnetpassword', 'newpassword', 'email'), $request, $response))
+    {
+      $request_data = $request->getParsedBody();
+
+      $currnetpassword = $request_data['currnetpassword'];
+      $newpassword = $request_data['newpassword'];
+      $email = $request_data['email'];
+
+      $db = new DbOperations;
+
+      $result = $db->updatePassword($currnetpassword, $newpassword, $email);
+
+       if($result == PASSWORD_CHANGED)
+       {
+        $response_data = array();
+        $response_data['error'] = false;
+        $response_data['message'] = 'Password Changed';
+
+        $response->write(json_encode($response_data));
+
+        return $response
+                       ->withHeader('Content-type', 'application/json')
+                       ->withStatus(200);
+
+       }
+       elseif($result == PASSWORD_DO_NOT_MATCH)
+       {
+        $response_data = array();
+        $response_data['error'] = true;
+        $response_data['message'] = 'You have given wrong password';
+
+        $response->write(json_encode($response_data));
+        
+        return $response
+                       ->withHeader('Content-type', 'application/json')
+                       ->withStatus(422);
+
+       }
+       elseif($result == PASSWORD_NOT_CHANGED)
+       {
+        $response_data = array();
+        $response_data['error'] = true;
+        $response_data['message'] = 'Some error Occurred';
+
+        $response->write(json_encode($response_data));
+        
+        return $response
+                       ->withHeader('Content-type', 'application/json')
+                       ->withStatus(422);
+       }
+
+    }
+
+    return $response
+    ->withHeader('Content-type', 'application/json')
+    ->withStatus(422);
+
+
+});
+
+
+//This function to check parameter if empty or not
 function haveEmptyParameters($required_params, $request, $response){
 
     $error = false;

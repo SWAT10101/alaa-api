@@ -137,6 +137,38 @@
 
     }
 
+    //This function to change user password 
+    public function updatePassword($currnetpassword, $newpassword, $email)
+    {
+
+        $hashed_password = $this->getUserPasswordByEmail($email);
+
+        if(password_verify($currnetpassword, $hashed_password))
+        {
+            $hase_password = password_hash($newpassword, PASSWORD_DEFAULT);
+            $stmt = $this->con->prepare("UPDATE users SET Password = ? WHERE Email = ?"); 
+            $stmt->bind_param("ss", $hase_password, $email);
+            
+            if($stmt->execute())
+            {
+               return PASSWORD_CHANGED;
+            }
+            else
+            {
+                return PASSWORD_DO_NOT_MATCH;
+            }
+            
+        }
+        else
+        {
+          return PASSWORD_DO_NOT_MATCH;
+        }
+
+
+        
+
+    }
+
     // This function to check if user exist
     private function isEmailExist($email){
         $stmt = $this->con->prepare("SELECT PersonID FROM users WHERE Email = ?");
