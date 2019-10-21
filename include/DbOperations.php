@@ -169,6 +169,27 @@
 
     }
 
+    public function deleteUser($id)
+    {
+
+        $stmt = $this->con->prepare("DELETE FROM users WHERE PersonID = ?"); 
+
+        $stmt->bind_param("i", $id);
+            
+        if($stmt->execute())
+        {
+           return true;
+        }
+        else
+        {
+            return false;
+        }
+        
+    }
+   
+        
+    
+
     // This function to check if user exist
     private function isEmailExist($email){
         $stmt = $this->con->prepare("SELECT PersonID FROM users WHERE Email = ?");

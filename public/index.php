@@ -301,6 +301,53 @@ $app->put('/updatepassword', function(Request $request, Response $response, arra
 });
 
 
+/*
+endpoint: delete user  
+paramenters: id
+method: delete
+*/
+$app->delete('/deleteuser/{id}', function(Request $request, Response $response, array $args){
+
+      $id = $args['id'];
+      $db = new DbOperations;
+
+      if($db->deleteUser($id))
+      {
+        $response_data = array();
+        $response_data['error'] = false;
+        $response_data['message'] = 'User has been deleted';
+
+        $response->write(json_encode($response_data));
+
+        return $response
+                       ->withHeader('Content-type', 'application/json')
+                       ->withStatus(200); 
+      }
+      else
+      {
+        $response_data = array();
+        $response_data['error'] = true;
+        $response_data['message'] = 'Plase try agine later';
+
+        $response->write(json_encode($response_data));
+
+        return $response
+                       ->withHeader('Content-type', 'application/json')
+                       ->withStatus(422);
+
+      }
+
+    
+    
+
+    return $response
+    ->withHeader('Content-type', 'application/json')
+    ->withStatus(422);
+
+
+});
+
+
 //This function to check parameter if empty or not
 function haveEmptyParameters($required_params, $request, $response){
 
