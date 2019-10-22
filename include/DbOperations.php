@@ -13,12 +13,12 @@
     }
 
     //This function to create users
-    public function createUser($firstanem, $lastName, $email, $password, $phone, $block, $street, $building, $Floor, $Flat)
+    public function createUser($firstanem, $lastName, $email, $password, $phone, $region, $block, $street, $building, $Floor, $Flat)
     {
         if(!$this->isEmailExist($email))
         {
-            $stmt = $this->con->prepare("INSERT INTO users (FirstName, LasttName, Email, Password, Phone, Block, Street, Building, Floor, Flat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssssisssss", $firstanem, $lastName, $email, $password, $phone, $block, $street, $building, $Floor, $Flat);
+            $stmt = $this->con->prepare("INSERT INTO users (FirstName, LasttName, Email, Password, Phone, regionId, Block, Street, Building, Floor, Flat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssiisssss", $firstanem, $lastName, $email, $password, $phone, $region, $block, $street, $building, $Floor, $Flat);
 
            if($stmt->execute())
            {
@@ -78,16 +78,17 @@
     //This function to get user by his email
     public function getUserByEmail($email)
     {
-        $stmt = $this->con->prepare("SELECT FirstName, LasttName, Email, Phone, Block, Street, Building, Floor, Flat FROM users WHERE Email = ?"); 
+        $stmt = $this->con->prepare("SELECT FirstName, LasttName, Email, Phone, region.name, Block, Street, Building, Floor, Flat FROM users JOIN region WHERE users.regionId = region.regionId AND users.Email = ?"); 
         $stmt->bind_param("s", $email);
         $stmt->execute();
-        $stmt->bind_result($firstname, $lastName, $email, $phone, $block, $street, $building, $floor, $flar);
+        $stmt->bind_result($firstname, $lastName, $email, $phone, $region, $block, $street, $building, $floor, $flar);
         $stmt->fetch();
         $user = array();
         $user['FirstName'] = $firstname;
         $user['LasttName'] = $lastName;
         $user['Email'] = $email;
         $user['Phone'] = $phone;
+        $user['region'] = $region;
         $user['Block'] = $block;
         $user['Street'] = $street;
         $user['Building'] = $building;
@@ -99,9 +100,9 @@
     //This function to get all users 
     public function getAllUsers()
     {
-        $stmt = $this->con->prepare("SELECT FirstName, LasttName, Email, Phone, Block, Street, Building, Floor, Flat FROM users;"); 
+        $stmt = $this->con->prepare("SELECT FirstName, LasttName, Email, Phone, region.name, Block, Street, Building, Floor, Flat FROM users JOIN region WHERE users.regionId = region.regionId;"); 
         $stmt->execute();
-        $stmt->bind_result($firstname, $lastName, $email, $phone, $block, $street, $building, $floor, $flar);
+        $stmt->bind_result($firstname, $lastName, $email, $phone, $region, $block, $street, $building, $floor, $flar);
         $users = array();
         while($stmt->fetch())
         {
@@ -110,6 +111,7 @@
             $user['LasttName'] = $lastName;
             $user['Email'] = $email;
             $user['Phone'] = $phone;
+            $user['region'] = $region;
             $user['Block'] = $block;
             $user['Street'] = $street;
             $user['Building'] = $building;
@@ -187,8 +189,6 @@
         
     }
    
-        
-    
 
     // This function to check if user exist
     private function isEmailExist($email){
