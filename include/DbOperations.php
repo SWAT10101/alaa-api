@@ -13,12 +13,12 @@
     }
 
     //This function to create users
-    public function createUser($firstanem, $lastName, $email, $password, $phone, $region, $block, $street, $building, $Floor, $Flat)
+    public function createUser($firstanem, $lastName, $email, $password, $phone, $region, $state, $block, $street, $building, $Floor, $Flat)
     {
         if(!$this->isEmailExist($email))
         {
-            $stmt = $this->con->prepare("INSERT INTO users (FirstName, LasttName, Email, Password, Phone, regionId, Block, Street, Building, Floor, Flat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssssiisssss", $firstanem, $lastName, $email, $password, $phone, $region, $block, $street, $building, $Floor, $Flat);
+            $stmt = $this->con->prepare("INSERT INTO users (FirstName, LasttName, Email, Password, Phone, regionId, State, Block, Street, Building, Floor, Flat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssiissssss", $firstanem, $lastName, $email, $password, $phone, $region, $state, $block, $street, $building, $Floor, $Flat);
 
            if($stmt->execute())
            {
@@ -78,10 +78,10 @@
     //This function to get user by his email
     public function getUserByEmail($email)
     {
-        $stmt = $this->con->prepare("SELECT FirstName, LasttName, Email, Phone, region.name, Block, Street, Building, Floor, Flat FROM users JOIN region WHERE users.regionId = region.regionId AND users.Email = ?"); 
+        $stmt = $this->con->prepare("SELECT FirstName, LasttName, Email, Phone, region.name, State, Block, Street, Building, Floor, Flat FROM users JOIN region WHERE users.regionId = region.regionId AND users.Email = ?"); 
         $stmt->bind_param("s", $email);
         $stmt->execute();
-        $stmt->bind_result($firstname, $lastName, $email, $phone, $region, $block, $street, $building, $floor, $flar);
+        $stmt->bind_result($firstname, $lastName, $email, $phone, $region, $state, $block, $street, $building, $floor, $flar);
         $stmt->fetch();
         $user = array();
         $user['FirstName'] = $firstname;
@@ -89,6 +89,7 @@
         $user['Email'] = $email;
         $user['Phone'] = $phone;
         $user['region'] = $region;
+        $user['state'] = $state;
         $user['Block'] = $block;
         $user['Street'] = $street;
         $user['Building'] = $building;
@@ -100,9 +101,9 @@
     //This function to get all users 
     public function getAllUsers()
     {
-        $stmt = $this->con->prepare("SELECT FirstName, LasttName, Email, Phone, region.name, Block, Street, Building, Floor, Flat FROM users JOIN region WHERE users.regionId = region.regionId;"); 
+        $stmt = $this->con->prepare("SELECT FirstName, LasttName, Email, Phone, region.name, State, Block, Street, Building, Floor, Flat FROM users JOIN region WHERE users.regionId = region.regionId;"); 
         $stmt->execute();
-        $stmt->bind_result($firstname, $lastName, $email, $phone, $region, $block, $street, $building, $floor, $flar);
+        $stmt->bind_result($firstname, $lastName, $email, $phone, $region, $state, $block, $street, $building, $floor, $flar);
         $users = array();
         while($stmt->fetch())
         {
@@ -112,6 +113,7 @@
             $user['Email'] = $email;
             $user['Phone'] = $phone;
             $user['region'] = $region;
+            $user['state'] = $state;
             $user['Block'] = $block;
             $user['Street'] = $street;
             $user['Building'] = $building;
@@ -124,10 +126,10 @@
     }
 
     //This function to update user information
-    public function updateUser($email, $phone, $block, $street, $building, $floor, $flat, $id)
+    public function updateUser($email, $phone, $region, $state, $block, $street, $building, $floor, $flat, $id)
     {
-        $stmt = $this->con->prepare("UPDATE users SET Email = ?, Phone = ?, Block = ?, Street = ?, Building = ?, Floor = ?, Flat = ? WHERE PersonID = ?"); 
-        $stmt->bind_param("sisssssi", $email, $phone, $block, $street, $building, $floor, $flat, $id);
+        $stmt = $this->con->prepare("UPDATE users SET Email = ?, Phone = ?, regionId = ?, State = ?,Block = ?, Street = ?, Building = ?, Floor = ?, Flat = ? WHERE PersonID = ?"); 
+        $stmt->bind_param("siissssssi", $email, $phone, $region, $state, $block, $street, $building, $floor, $flat, $id);
         if($stmt->execute())
         {
            return true;

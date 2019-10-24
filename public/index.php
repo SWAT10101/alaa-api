@@ -16,11 +16,11 @@ $app = new \Slim\App($config);
 
 /*
 endpoint: createuser
-paramenters: firstname, lastname, email, password, phone, region, block, building, floor, flat
+paramenters: firstname, lastname, email, password, phone, region, state, block, building, floor, flat
 method: post
 */
 $app->post('/createuser', function(Request $request, Response $response){
-    if(!haveEmptyParameters(array('firstname','lastname', 'email', 'password', 'phone', 'region', 'block', 'street','building', 'floor', 'flat' ), $request, $response))
+    if(!haveEmptyParameters(array('firstname','lastname', 'email', 'password', 'phone', 'region' , 'state','block', 'street','building', 'floor', 'flat' ), $request, $response))
     {
         $request_data = $request->getParsedBody();
         
@@ -30,6 +30,7 @@ $app->post('/createuser', function(Request $request, Response $response){
         $password = $request_data['password'];
         $phone = $request_data['phone'];
         $region = $request_data['region'];
+        $state = $request_data['state'];
         $block = $request_data['block'];
         $street = $request_data['street'];
         $building = $request_data['building'];
@@ -40,7 +41,7 @@ $app->post('/createuser', function(Request $request, Response $response){
 
         $db = new DbOperations;
 
-        $result = $db->createUser($firstname, $lastname, $email, $hase_password, $phone, $region, $block, $street,$building, $floor, $flat);
+        $result = $db->createUser($firstname, $lastname, $email, $hase_password, $phone, $region, $state, $block, $street,$building, $floor, $flat);
         
         if($result == USER_CREATED)
         {
@@ -181,13 +182,15 @@ $app->put('/updateuser/{id}', function(Request $request, Response $response, arr
 
     $id = $args['id'];
 
-    if(!haveEmptyParameters(array('email','phone', 'block', 'street', 'building', 'floor', 'flat', 'id'), $request, $response))
+    if(!haveEmptyParameters(array('email','phone', 'region', 'state', 'block', 'street', 'building', 'floor', 'flat', 'id'), $request, $response))
     {
         $request_data = $request->getParsedBody();
 
 
         $email = $request_data['email'];
         $phone = $request_data['phone'];
+        $region = $request_data['region'];
+        $state = $request_data['state'];
         $block = $request_data['block'];
         $street = $request_data['street'];
         $building = $request_data['building'];
@@ -197,7 +200,7 @@ $app->put('/updateuser/{id}', function(Request $request, Response $response, arr
 
         $db = new DbOperations;
 
-        if($db->updateUser($email, $phone, $block, $street, $building, $floor, $flat, $id))
+        if($db->updateUser($email, $phone, $region, $state, $block, $street, $building, $floor, $flat, $id))
         {
             $response_data = array();
             $response_data['error'] = false;
