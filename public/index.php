@@ -51,7 +51,7 @@ $app->post('/createuser', function(Request $request, Response $response){
            $response->write(json_encode($message));
            return $response
                           ->withHeader('Content-type', 'application/json')
-                          ->withStatus(201);
+                          ->withStatus(200);
 
         }
         else if($result == USER_FAILURE)
@@ -69,7 +69,7 @@ $app->post('/createuser', function(Request $request, Response $response){
         {
 
             $message = array();
-           $message['error'] = false;
+           $message['error'] = true;
            $message['message'] = 'User Already Exists';
            $response->write(json_encode($message));
            return $response
@@ -168,6 +168,27 @@ $app->get('/allusers', function(Request $request, Response $response ){
 
         return $response->withHeader('Content-type', 'application/json')
         ->withStatus(200);
+
+});
+
+
+/*
+endpoint: all regions 
+paramenters: No
+method: get
+*/
+$app->get('/allregion', function(Request $request, Response $response ){
+    $db = new DbOperations;
+
+    $regions = $db->getAllRagion();
+
+    $response_data['error'] = false;
+    $response_data['regions'] = $regions;
+
+    $response->write(json_encode($response_data));
+
+    return $response->withHeader('Content-type', 'application/json')
+    ->withStatus(200);
 
 });
 

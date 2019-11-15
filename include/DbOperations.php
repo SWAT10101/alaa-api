@@ -125,6 +125,25 @@
         
     }
 
+
+    // This function to gat all region for address
+    public function getAllRagion()
+    {
+        $stmt = $this->con->prepare("SELECT regionId, name from region;"); 
+        $stmt->execute();
+        $stmt->bind_result($regionId, $name);
+        $regions = array();
+        while($stmt->fetch())
+        {
+            $region = array();
+            $region['RegionId'] = $regionId;
+            $region['Name'] = $name;
+            array_push($regions, $region);
+        }
+        return $regions;
+        
+    }
+
     //This function to update user information
     public function updateUser($email, $phone, $region, $state, $block, $street, $building, $floor, $flat, $id)
     {
